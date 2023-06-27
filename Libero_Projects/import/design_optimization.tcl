@@ -13,99 +13,25 @@ set_root $sdName
 #	build_design_hierarchy
 #}
 
-if {$config in {"CFG1" "CFG2" "CFG3"}} {
-	# Import constraint files
-	import_files -io_pdc $scriptDir/import/constraints/io/io_constraints.pdc
-	import_files -sdc $scriptDir/import/constraints/io_jtag_constraints.sdc
-	import_files -sdc $scriptDir/import/constraints/io_sys_constraints.sdc
-	#import_files -fp_pdc $scriptDir/import/constraints/fp/ccc_fp.pdc
+# Import constraint files for all base and design guide configurations
+import_files -sdc $scriptDir/import/constraints/io_jtag_constraints.sdc
+import_files -io_pdc $scriptDir/import/constraints/io/io_constraints.pdc
 
-	# #Associate SDC constraint file to Place and Route tool
-	organize_tool_files -tool {PLACEROUTE} \
-		-file $projectDir/constraint/io/io_constraints.pdc \
-		-file $projectDir/constraint/io_jtag_constraints.sdc \
-		-file $projectDir/constraint/io_sys_constraints.sdc \
-		-module ${sdName}::work -input_type {constraint}
+# Organize PDC and SDC constraints to Synthesis, Place and Route and Verify Timing tools
 
-	organize_tool_files -tool {SYNTHESIZE} \
-		-file $projectDir/constraint/io_jtag_constraints.sdc \
-		-file $projectDir/constraint/io_sys_constraints.sdc \
-		-module ${sdName}::work -input_type {constraint}
+# CFG1, CFG2, CFG3 MIV_RV32: Base Configs 
+organize_tool_files -tool {PLACEROUTE} \
+	-file $projectDir/constraint/io/io_constraints.pdc \
+	-file $projectDir/constraint/io_jtag_constraints.sdc \
+	-module ${sdName}::work -input_type {constraint}
 
-	organize_tool_files -tool {VERIFYTIMING} \
-		-file $projectDir/constraint/io_jtag_constraints.sdc \
-		-file $projectDir/constraint/io_sys_constraints.sdc \
-		-module ${sdName}::work -input_type {constraint}
+organize_tool_files -tool {SYNTHESIZE} \
+	-file $projectDir/constraint/io_jtag_constraints.sdc \
+	-module ${sdName}::work -input_type {constraint}
 
-} elseif {$config eq "CFG4"} {
-
-	import_files -io_pdc $scriptDir/import/constraints/cfg4/io_constraints.pdc
-	import_files -sdc $scriptDir/import/constraints/cfg4/timing_user_constraints.sdc
-	import_files -fp_pdc $scriptDir/import/constraints/cfg4/fp_constraints.pdc
-
-	print_message "CFG4 Memory Map"
-
-	puts "| Component             | Address Offset  | Range  | High Address |"
-	puts "| Crypto_Buffer_0       | 0x0100_0000     | 16MB   | 0x01FF_FFFF  |"
-	puts "| AHBS_TO_AHBM_Bridge   | 0x0200_0000     | 16MB   | 0x02FF_FFFF  |"
-	puts "| UART_IF_0             | 0x7000_0000     | 4KB    | 0x0000_0FFF  |"
-	puts "| CoreGPIO_OUT_0        | 0x7000_1000     | 4KB    | 0x0000_1FFF  |"
-	puts "| SPI_Controller        | 0x7000_2000     | 4KB    | 0x0000_2FFF  |"
-	puts "| SystemServices_0      | 0x7000_3000     | 4KB    | 0x0000_3FFF  |"
-	puts "| LSRAM_0               | 0x8000_0000     | 64kB   | 0x8000_FFFF  |"
-	puts "| DDR3_Subsys_0         | 0x8001_0000     | 15MB   | 0x80FF_FFFF  |"
-
-	# #Associate SDC constraint file to Place and Route tool
-	organize_tool_files -tool {PLACEROUTE} \
-		-file $projectDir/constraint/io/io_constraints.pdc \
-		-file $projectDir/constraint/timing_user_constraints.sdc \
-		-file $projectDir/constraint/fp/fp_constraints.pdc \
-		-module {BaseDesign::work} -input_type {constraint}
-
-	organize_tool_files -tool {SYNTHESIZE} \
-		-file $projectDir/constraint/timing_user_constraints.sdc \
-		-module {BaseDesign::work} -input_type {constraint}
-
-	organize_tool_files -tool {VERIFYTIMING} \
-		-file $projectDir/constraint/timing_user_constraints.sdc \
-		-module {BaseDesign::work} -input_type {constraint}
-
-} elseif {$config eq "DGC1"} {
-	# Import constraint files
-	import_files -io_pdc $scriptDir/import/constraints/io/io_constraints.pdc
-	import_files -sdc $scriptDir/import/constraints/io_jtag_constraints.sdc
-	import_files -sdc $scriptDir/import/constraints/io_sys_constraints.sdc
-	#import_files -fp_pdc $scriptDir/import/constraints/fp/ccc_fp.pdc
-
-	# #Associate SDC constraint file to Place and Route tool
-	organize_tool_files -tool {PLACEROUTE} \
-		-file $projectDir/constraint/io/io_constraints.pdc \
-		-file $projectDir/constraint/io_jtag_constraints.sdc \
-		-file $projectDir/constraint/io_sys_constraints.sdc \
-		-module ${sdName}::work -input_type {constraint}
-
-	organize_tool_files -tool {SYNTHESIZE} \
-		-file $projectDir/constraint/io_jtag_constraints.sdc \
-		-file $projectDir/constraint/io_sys_constraints.sdc \
-		-module ${sdName}::work -input_type {constraint}
-
-	organize_tool_files -tool {VERIFYTIMING} \
-		-file $projectDir/constraint/io_jtag_constraints.sdc \
-		-file $projectDir/constraint/io_sys_constraints.sdc \
-		-module ${sdName}::work -input_type {constraint}
-
-
-} elseif {$config eq "DGC3"} {
-
-
-
-} elseif {$config eq "DGC4"} {
-
-}
-
+organize_tool_files -tool {VERIFYTIMING} \
+	-file $projectDir/constraint/io_jtag_constraints.sdc \
+	-module ${sdName}::work -input_type {constraint}
 
 run_tool -name {CONSTRAINT_MANAGEMENT}
 derive_constraints_sdc
-
-
-
