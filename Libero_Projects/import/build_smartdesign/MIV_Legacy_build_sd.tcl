@@ -93,7 +93,7 @@ sd_instantiate_component -sd_name ${sdName}  -component_name {PF_CCC_C0} -instan
 
 
 # Add Clock Buffer Macro for ref clock
-sd_instantiate_macro -sd_name ${sdName} -macro_name {CLKBUF} -instance_name {CLKBUF_0} 
+sd_instantiate_macro -sd_name ${sdName} -macro_name {CLKINT} -instance_name {CLKINT_0} 
 
 
 # Add CoreTimer_C0 instance
@@ -162,8 +162,8 @@ if {$config eq "CFG3"} {sd_instantiate_component -sd_name ${sdName} -component_n
 
 
 # Add scalar net connections
-sd_connect_pins -sd_name ${sdName} -pin_names {"CLKBUF_0:Y" "PF_CCC_C0_0:REF_CLK_0"} 
-sd_connect_pins -sd_name ${sdName} -pin_names {"CLKBUF_0:PAD" "REF_CLK"}
+sd_connect_pins -sd_name ${sdName} -pin_names {"CLKINT_0:Y" "PF_CCC_C0_0:REF_CLK_0"} 
+sd_connect_pins -sd_name ${sdName} -pin_names {"CLKINT_0:PAD" "REF_CLK"}
 sd_connect_pins -sd_name ${sdName} -pin_names {"PF_CCC_C0_0:OUT0_FABCLK_0" "CORERESET_PF_C0_0:CLK"}
 sd_connect_pins -sd_name ${sdName} -pin_names {"PF_CCC_C0_0:PLL_LOCK_0" "CORERESET_PF_C0_0:PLL_LOCK" }
 sd_connect_pins -sd_name ${sdName} -pin_names "PF_CCC_C0_0:OUT0_FABCLK_0 ${legacyCpu}_C0_0:CLK" 
